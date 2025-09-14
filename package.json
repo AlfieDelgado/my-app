@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
+    "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.27.1",
     "@eslint/js": "^9.33.0",
@@ -46,14 +47,13 @@
     "vite": "^7.1.2"
   },
   "jest": {
-    "testEnvironment": "jsdom",
+    "testEnvironment": "<rootDir>/src/__tests__/testEnvironment.js",
     "setupFilesAfterEnv": [
       "<rootDir>/src/__tests__/setup.js"
     ],
     "moduleNameMapper": {
       "\\.(css|less|scss|sass)$": "identity-obj-proxy",
-      "^@/(.*)$": "<rootDir>/src/$1",
-      "./supabaseClient": "<rootDir>/src/__tests__/mocks/supabaseClient.js"
+      "^@/(.*)$": "<rootDir>/src/$1"
     },
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
@@ -66,18 +66,21 @@
       "html"
     ],
     "transform": {
-      "^.+\\.(js|jsx)$": "babel-jest"
+      "^.+\\.(js|jsx)$": "babel-jest",
+      "^.+supabaseClient\\.js$": "<rootDir>/src/__tests__/mocks/supabaseClientTransform.cjs"
     },
-    "extensionsToTreatAsEsm": [".jsx"],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@supabase/supabase-js)/)"
+    ],
+    "extensionsToTreatAsEsm": [
+      ".jsx"
+    ],
     "testMatch": [
       "**/__tests__/**/*.(test|spec).(js|jsx)",
       "**/*.(test|spec).(js|jsx)"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/src/__tests__/mocks/"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!(@supabase/supabase-js)/)"
     ],
     "setupFiles": [
       "<rootDir>/src/__tests__/mocks/textEncoder.js"

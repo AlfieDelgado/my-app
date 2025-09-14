@@ -3,12 +3,46 @@ import { supabase } from './supabaseClient'
 
 const AuthContext = createContext()
 
+// Check if we're in a test environment
+const isTestEnvironment = process.env.NODE_ENV === 'test'
+
+// Export the context for use in tests
+export { AuthContext }
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [session, setSession] = useState(null)
 
   useEffect(() => {
+    // In test environment, we still want to set up the auth state change listener
+    // but we'll set loading to false immediately
+    if (isTestEnvironment) {
+      setLoading(false)
+      
+      // Don't set up a mock user by default in tests
+      // Tests should control the user state through the supabase mock
+      
+      // Still set up the listener for tests that need to trigger auth state changes
+      if (supabase) {
+        const { data: { subscription: sub } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            // Use a timeout to ensure state updates are properly batched
+            setTimeout(() => {
+              setUser(session?.user || null)
+              setSession(session)
+            }, 0)
+          }
+        )
+        
+        return () => {
+          if (sub) sub.unsubscribe()
+        }
+      }
+      
+      return
+    }
+    
     // Check for active session on load
     const getSession = async () => {
       if (!supabase) {

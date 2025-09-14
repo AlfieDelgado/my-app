@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './AuthContext.jsx'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
@@ -25,6 +25,18 @@ function AuthWrapper() {
   const { user, loading } = useAuth()
   const [authMode, setAuthMode] = useState('login') // 'login' or 'signup'
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Set authMode based on current path when component mounts
+  useEffect(() => {
+    if (!loading && !user) {
+      if (location.pathname === '/signup') {
+        setAuthMode('signup')
+      } else {
+        setAuthMode('login')
+      }
+    }
+  }, [loading, user, location.pathname])
   
   // Navigate to the appropriate route when authMode changes
   useEffect(() => {

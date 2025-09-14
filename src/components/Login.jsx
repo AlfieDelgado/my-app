@@ -63,6 +63,11 @@ function Login({ onToggleMode }) {
                 {resetMessage}
               </div>
             )}
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
             <form onSubmit={handlePasswordReset} className="flex flex-col gap-4">
               <input
                 type="email"
