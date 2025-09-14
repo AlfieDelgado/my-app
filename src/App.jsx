@@ -6,6 +6,7 @@ import SignUp from './components/SignUp'
 import AuthButton from './components/AuthButton'
 import ProtectedRoute from './components/ProtectedRoute'
 import TodoList from './components/TodoList'
+import ErrorBoundary from './components/ErrorBoundary'
 
 function TodoApp() {
   return (
@@ -82,9 +83,11 @@ function AuthWrapper() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AuthWrapper />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <AuthWrapper />
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 

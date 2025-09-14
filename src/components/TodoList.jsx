@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useTodos } from '../hooks/useTodos'
+import Button from './Button.jsx'
+import TodoItem from './TodoItem.jsx'
 
 function TodoList({ showTitle = true }) {
   const [inputValue, setInputValue] = useState('')
@@ -127,12 +129,9 @@ function TodoList({ showTitle = true }) {
           placeholder="Add a new task..."
           className="flex-1 p-4 rounded-xl border-2 border-indigo-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent shadow-sm transition-all duration-200"
         />
-        <button
-          onClick={handleAddTodo}
-          className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-        >
+        <Button onClick={handleAddTodo}>
           Add
-        </button>
+        </Button>
       </div>
       <div className="flex w-full gap-3">
         <button
@@ -168,67 +167,18 @@ function TodoList({ showTitle = true }) {
       </div>
       <ul className="list-none p-0 w-full flex flex-col gap-4">
         {filteredTodos.map(todo => (
-          <li
+          <TodoItem
             key={todo.id}
-            className={`flex justify-between items-center p-5 rounded-xl shadow-sm transition-all duration-200 ${
-              todo.completed
-                ? 'bg-indigo-50 opacity-80'
-                : 'bg-white hover:shadow-md border border-indigo-100'
-            }`}
-          >
-            {editingId === todo.id ? (
-              <div className="flex flex-col gap-3 w-full">
-                <input
-                  type="text"
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  className="w-full p-4 rounded-xl border-2 border-indigo-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent shadow-sm transition-all duration-200"
-                  autoFocus
-                />
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => saveEdit(todo.id)}
-                    className="px-4 py-2 rounded-xl bg-green-500 text-white font-medium hover:bg-green-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 shadow-sm hover:shadow-md"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={cancelEditing}
-                    className="px-4 py-2 rounded-xl bg-gray-400 text-white font-medium hover:bg-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 shadow-sm hover:shadow-md"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center w-full">
-                <span
-                  onClick={() => handleToggleTodo(todo.id, todo.completed)}
-                  className={`cursor-pointer flex-1 text-left text-lg font-medium transition-all duration-200 ${
-                    todo.completed
-                      ? 'line-through text-indigo-300'
-                      : 'text-indigo-900 hover:text-indigo-700'
-                  }`}
-                >
-                  {todo.text}
-                </span>
-                <div className="flex gap-3 ml-4">
-                  <button
-                    onClick={() => startEditing(todo.id, todo.text)}
-                    className="px-4 py-2 rounded-lg bg-indigo-100 text-indigo-600 font-medium hover:bg-indigo-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteTodo(todo.id)}
-                    className="px-4 py-2 rounded-lg bg-red-100 text-red-600 font-medium hover:bg-red-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-sm"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            )}
-          </li>
+            todo={todo}
+            isEditing={editingId === todo.id}
+            editText={editText}
+            onToggle={handleToggleTodo}
+            onDelete={handleDeleteTodo}
+            onEditStart={startEditing}
+            onEditSave={saveEdit}
+            onEditCancel={cancelEditing}
+            onEditTextChange={(e) => setEditText(e.target.value)}
+          />
         ))}
       </ul>
       {filteredTodos.length === 0 && (

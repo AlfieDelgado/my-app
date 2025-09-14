@@ -43,18 +43,22 @@ export function AuthProvider({ children }) {
       return
     }
     
+    // Helper function to batch auth state updates
+    const setAuthState = (user, session, isLoading = false) => {
+      setUser(user || null)
+      setSession(session)
+      setLoading(isLoading)
+    }
+
     // Check for active session on load
     const getSession = async () => {
       if (!supabase) {
-        setLoading(false)
+        setAuthState(null, null, false)
         return
       }
       
       const { data: { session } } = await supabase.auth.getSession()
-      // Batch state updates to prevent multiple renders
-      setUser(session?.user || null)
-      setSession(session)
-      setLoading(false)
+      setAuthState(session?.user, session, false)
     }
 
     getSession()
@@ -65,9 +69,7 @@ export function AuthProvider({ children }) {
       const { data: { subscription: sub } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
           // Batch state updates to prevent multiple renders
-          setUser(session?.user || null)
-          setSession(session)
-          setLoading(false)
+          setAuthState(session?.user, session, false)
         }
       )
       subscription = sub
